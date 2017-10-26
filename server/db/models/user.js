@@ -33,7 +33,7 @@ User.encryptPassword = function(plainText, salt){
   return crypto.createHash('RSA-SHA256').update(plainText).update(salt).digest('hex')
 }
 
-const seaSaltAndPassword = user => {
+const setSaltAndPassword = user => {
   if (user.changed('password')) {
     user.salt = User.generateSalt()
     user.password = User.encryptPassword(user.password, user.salt)
