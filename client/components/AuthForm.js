@@ -7,21 +7,21 @@ const AuthForm = (props) => {
   const { name, displayName, handleSubmit, error } = props
 
   return(<div>
-    <form onSubmit={handleSubmit} name={name}>
-      <div>
-        <label htmlFor='email'>Email</label>
-        <input name='email' type='text'></input>
-      </div>
-      <div>
-        <label htmlFor='password'>Password</label>
-        <input name='password' type='password' />
-      </div>
-      <div>
-        <button type='submit'>{displayName}</button>
-        {error && error.response && <div> {error.response.data} </div>}
-      </div>
-    </form>
-  </div>)
+          <form onSubmit={handleSubmit} name={name}>
+            <div>
+              <label htmlFor='email'>Email</label>
+              <input name='email' type='text'></input>
+            </div>
+            <div>
+              <label htmlFor='password'>Password</label>
+              <input name='password' type='password' />
+            </div>
+            <div>
+              <button type='submit'>{displayName}</button>
+              {error && error.response && <div> {error.response.data} </div>}
+            </div>
+          </form>
+        </div>)
 }
 
 const mapLogin = (state) => {

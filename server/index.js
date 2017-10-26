@@ -13,20 +13,14 @@ const app = express()
 //const socketio = require('socket.io')
 module.exports = app
 
-// passport registration
-passport.serializeUser((user, done) => {
-  try {
-    done(null, user.id);
-  } catch (err) {
-    done(err);
-  }
-});
+//if (process.env.NODE_ENV !== 'production') require('../secrets')
 
-passport.deserializeUser((id, done) => {
-  User.findById(id)
+// passport registration
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) =>
+  db.models.user.findById(id)
     .then(user => done(null, user))
-    .catch(done);
-});
+    .catch(done));
 
 // you'll of course want static middleware so your browser can request things like your 'bundle.js'
 app.use(express.static(path.join(__dirname, '..', 'public')))
@@ -68,6 +62,7 @@ app.use((err, req, res, next) => {
 })
 
 
+//db.sync({ force:true })
 db.sync()
   .then(()=>{
     // node server
