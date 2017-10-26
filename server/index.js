@@ -13,6 +13,14 @@ const app = express()
 //const socketio = require('socket.io')
 module.exports = app
 
+// /**
+//  * In your development environment, you can keep all of your
+//  * app's secret API keys in a file called `secrets.js`, in your project
+//  * root. This file is included in the .gitignore - it will NOT be tracked
+//  * or show up on Github. On your production server, you can add these
+//  * keys as environment variables, so that they can still be read by the
+//  * Node process on process.env
+//  */
 //if (process.env.NODE_ENV !== 'production') require('../secrets')
 
 // passport registration
@@ -22,54 +30,67 @@ passport.deserializeUser((id, done) =>
     .then(user => done(null, user))
     .catch(done));
 
-// you'll of course want static middleware so your browser can request things like your 'bundle.js'
-app.use(express.static(path.join(__dirname, '..', 'public')))
+const createApp = () => {
+  // logging middleware
+  app.use(morgan('dev'));
 
-// logging middleware
-app.use(morgan('dev'));
+  // body parsing middleware
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: true }))
 
-// body parsing middleware
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+  // compression middleware
+  app.use(compression())
 
-// sync so that our session table gets created
-sessionStore.sync()
+  // session middleware with passport
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'my best friend is Ambal',
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false
+  }))
+  app.use(passport.initialize())
+  app.use(passport.session())
 
-// session middleware with passport
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'my best friend is Ambal',
-  store: sessionStore,
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
+  // auth and api routes
+  app.use('/auth', require('./auth'))
+  app.use('/api', require('./api'))
 
-// auth and api routes
-app.use('/auth', require('./auth'))
-app.use('/api', require('./api'))
+  // static file-serving middleware
+  app.use(express.static(path.join(__dirname, '..', 'public')))
 
-// sends index.html
-app.use('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public/index.html'))
-})
-
-// error handling endware
-app.use((err, req, res, next) => {
-  console.log(err)
-  console.error(err.stack)
-  res.status(err.status || 500).send(err.message || 'Internal server error.')
-})
-
-
-//db.sync({ force:true })
-db.sync()
-  .then(()=>{
-    // node server
-    app.listen(PORT, ()=>{
-      console.log(`Server listening on port ${PORT}`)
-    })
+  // sends index.html
+  app.use('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
   })
+
+  // error handling endware
+  app.use((err, req, res, next) => {
+    console.log(err)
+    console.error(err.stack)
+    res.status(err.status || 500).send(err.message || 'Internal server error.')
+  })
+}
+
+const startListening = () => {
+  // start listening (and create a 'server' object representing our server)
+  const server = app.listen(PORT, () => console.log(`Mixing it up on port ${PORT}`))
+
+  // // set up our socket control center
+  // const io = socketio(server)
+  // require('./socket')(io)
+}
+
+//const syncDb = () => db.sync({ force: true })
+const syncDb = () => db.sync()
+
+if (require.main === module) {
+  sessionStore.sync()
+    .then(syncDb)
+    .then(createApp)
+    .then(startListening)
+} else {
+  createApp()
+}
 
 
 
