@@ -28,9 +28,16 @@ app.use('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public/index.html'))
 })
 
+// error handling endware
+app.use((err, req, res, next) => {
+  console.log(err)
+  console.error(err.stack)
+  res.status(err.status || 500).send(err.message || 'Internal server error.')
+})
+
 // node server
-app.listen(3001, ()=>{
-  console.log("server running on port 3001!")
+app.listen(PORT, ()=>{
+  console.log(`Server listening on port ${PORT}`)
 })
 
 
