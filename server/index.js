@@ -16,8 +16,12 @@ module.exports = app
 // you'll of course want static middleware so your browser can request things like your 'bundle.js'
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
-// Any routes or other various middlewares should go here!
+// logging middleware
+app.use(morgan('dev'));
 
+// body parsing middleware
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // sends index.html
 app.use('*', (req, res) => {
