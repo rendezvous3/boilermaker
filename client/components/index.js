@@ -5,3 +5,4 @@
 //  */
 
 export { default as Main } from './Main'
+export {Login, Signup} from './AuthForm'
