@@ -6,18 +6,18 @@ import {auth} from '../store'
 const AuthForm = (props) => {
   const { name, displayName, handleSubmit, error } = props
 
-  return(<div>
+  return(<div className="col-sm-4 col-sm-offset-4">
           <form onSubmit={handleSubmit} name={name}>
-            <div>
+            <div className="form-group">
               <label htmlFor='email'>Email</label>
-              <input name='email' type='text'></input>
+              <input className="form-control" name='email' type='text'></input>
             </div>
-            <div>
+            <div className="form-group">
               <label htmlFor='password'>Password</label>
-              <input name='password' type='password' />
+              <input className="form-control" name='password' type='password' />
             </div>
             <div>
-              <button className="btn btn-default" type='submit'>{displayName}</button>
+              <button className="btn btn-default btn-block" type='submit'>{displayName}</button>
               {error && error.response && <div> {error.response.data} </div>}
             </div>
           </form>
