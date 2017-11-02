@@ -1,4 +1,9 @@
-body, label {
+body, label, h4 {
   font-family: "Helvetica Neue";
   font-weight: 200;
+
+  a {
+    text-decoration: none;
+  }
+
 }

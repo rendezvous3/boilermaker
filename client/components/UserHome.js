@@ -4,10 +4,12 @@ import { connect } from 'react-redux'
 
 export const UserHome = (props) => {
   const {email} = props
-  console.log(email)
   return (
-    <div>
-      <h3>Welcome, {email}</h3>
+    <div className="row">
+      <div className="col-sm-8 col-sm-offset-2">
+        <h4>Welcome, {email}</h4>
+        <hr />
+      </div>
     </div>
   )
 }
